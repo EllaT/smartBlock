@@ -13,7 +13,7 @@
 
 #define NUM_LEDS 10
 
-#define BRIGHTNESS 50
+#define BRIGHTNESS 30
 
 Adafruit_NeoPixel smartBlock = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_RGB + NEO_KHZ800);
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
