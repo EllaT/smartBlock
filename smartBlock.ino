@@ -1,5 +1,4 @@
 #include <Adafruit_NeoPixel.h>
-#include <Wire.h>
 #include "gyroAccel.h"
 #include <Adafruit_TCS34725.h>
 /**
@@ -13,7 +12,7 @@
 
 #define NUM_LEDS 10
 
-#define BRIGHTNESS 30
+#define BRIGHTNESS 10
 
 Adafruit_NeoPixel smartBlock = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_RGB + NEO_KHZ800);
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
@@ -27,98 +26,69 @@ void setup() {
 	smartBlock.clear();
 	smartBlock.show(); //initializes
 	Serial.begin(9600);
-	mpu6050.gyroStart();
-	if (tcs.begin()) {
-		Serial.println("Found sensor");
-	} else {
-		Serial.println("No TCS34725 found ... check your connections");
-		while (1); // halt!
-	}
+	//	mpu6050.gyroStart();
+	//	if (tcs.begin()) {
+	//		Serial.println("Found sensor");
+	//	} else {
+	//		Serial.println("No TCS34725 found ... check your connections");
+	//		while (1); // halt!
+	//	}
 }
 
 void loop() {
 	// put your main code here, to run repeatedly:
-	float red, green, blue;
-	int redSet = 0;
-	int greenSet = 0;
-	int blueSet = 0;
-	String secretMessage = "";
+	//	float red, green, blue;
+	//	int redSet = 0;
+	//	int greenSet = 0;
+	//	int blueSet = 0;
+	int secretMessageLength = 10;
+	uint8_t colorCodes[] =  {0 , 255, 0, 0};
 
-	tcs.setInterrupt(false);  // turn on LED
+	//	tcs.setInterrupt(false);  // turn on LED
+	//
+	//	delay(60);  // takes 50ms to read
+	//
+	//	tcs.getRGB(&red, &green, &blue);
+	//
+	//	tcs.setInterrupt(true);  // turn off LED
 
-	delay(60);  // takes 50ms to read
 
-	tcs.getRGB(&red, &green, &blue);
-
-	tcs.setInterrupt(true);  // turn off LED
-//
-	Serial.print("R:\t"); Serial.print(int(red));
-	Serial.print("\tG:\t"); Serial.print(int(green));
-	Serial.print("\tB:\t"); Serial.print(int(blue));
-
-	if(int(red) >= 175){
-		redSet = 255;
-	}
-	else if(int(red) < 100 && int(red) >= 50){
-		redSet = int(red);
-	}
-	else{
-		redSet = 0;
-	}
-
-	if(int(green) >= 175){
-		greenSet = 255;
-	}
-	else if(int(green) < 100 && int(green) >= 50 ){
-		greenSet = int(green);
-	}
-	else{
-		greenSet = 0;
-	}
-	if(int(blue) >= 175){
-		blueSet = 255;	}
-	else if(int(blue) < 100 && int(blue) >= 50 ){
-		blueSet = int(blue);
-	}
-	else{
-		blueSet = 0;
-	}
-
-	//  Serial.print("\t");
-	//  Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
-	Serial.print("\n");
-
-	mpu6050.getGyroValues();
-	long x = mpu6050.acc_x;
+	//
+	//	Serial.print("R:\t"); Serial.print(int(red));
+	//	Serial.print("\tG:\t"); Serial.print(int(green));
+	//	Serial.print("\tB:\t"); Serial.print(int(blue));
+	//
+	//
+	//	//  Serial.print("\t");
+	//	//  Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
+	//	Serial.print("\n");
+	//
+	//	mpu6050.getGyroValues();
+	//	long x = mpu6050.acc_x;
 	//Serial.println(x);
 	//Serial.print("\n");
 
-//	for(int i = 1; i <= 3; i++){
-//		switch (i){
-//		case 1:
-//			smartBlock.setPixelColor(0, smartBlock.Color(255, 0, 0));
-//			smartBlock.show(); //initializes
-//			Serial.println(secretMessage);
-//			delay(500);
-//
-//			break;
-//		case 2:
-//			smartBlock.setPixelColor(0, smartBlock.Color(0, 255, 0));
-//			smartBlock.show(); //initializes
-//			Serial.println(secretMessage);
-//			delay(500);
-//
-//			break;
-//		case 3:
-//			smartBlock.setPixelColor(0, smartBlock.Color(0, 0, 255));
-//			smartBlock.show(); //initializes
-//			Serial.println(secretMessage);
-//			delay(500);
-//			break;
-//		}
+	//	smartBlock.clear();
+	  for(long firstPixelHue = 8192; firstPixelHue < 65536; firstPixelHue += 8192) {
+		  // For each pixel in strip...
+	      // Offset pixel hue by an amount to make one full revolution of the
+	      // color wheel (range of 65536) along the length of the strip
+	      // (strip.numPixels() steps):
+	      int pixelHue = firstPixelHue;
+	      // strip.ColorHSV() can take 1 or 3 arguments: a hue (0 to 65535) or
+	      // optionally add saturation and value (brightness) (each 0 to 255).
+	      // Here we're using just the single-argument hue variant. The result
+	      // is passed through strip.gamma32() to provide 'truer' colors
+	      // before assigning to each pixel:
+	      smartBlock.setPixelColor(1, smartBlock.gamma32(smartBlock.ColorHSV(pixelHue)));
 
-//	}
-	smartBlock.setPixelColor(5, smartBlock.Color(redSet, greenSet, blueSet));
-	//smartBlock.clear();
+	      smartBlock.show(); // Update strip with new contents
+	      delay(10);  // Pause for a moment
+	      smartBlock.setPixelColor(1, 0, 0, 0);
+	      smartBlock.show(); // Update strip with new contents
+	      delay(100);  // Pause for a moment
+	  }
 
 }
+
+//smartBlock.clear();
