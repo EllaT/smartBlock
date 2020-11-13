@@ -6,7 +6,7 @@
 
 //	Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 //	Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
-	Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_2_4MS, TCS34725_GAIN_16X);
+	Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_2_4MS, TCS34725_GAIN_60X);
 
 //The setup function is called once at startup of the sketch
 void setup()
@@ -14,13 +14,13 @@ void setup()
 
 	Serial.begin(9600);
 
-	if (tcs.begin()) {
-		Serial.println("Found sensor");
-	} else {
-		Serial.println("No TCS34725 found ... check your connections");
-	while (1);
-	}
-
+//	if (tcs.begin()) {
+//		Serial.println("Found sensor");
+//	} else {
+//		Serial.println("No TCS34725 found ... check your connections");
+//	while (1);
+//	}
+	Serial.println(F("Blue Red Green"));
 }
 
 // The loop function is called in an endless loop
