@@ -1,124 +1,47 @@
-#include <Adafruit_NeoPixel.h>
-#include <Wire.h>
+#include "Arduino.h"
+
 #include "gyroAccel.h"
 #include <Adafruit_TCS34725.h>
-/**
- Defines for Neopixels
- */
-
-#define NEO_RGB  ((0<<6) | (0<<4) | (1<<2) | (2)) ///< Transmit as R,G,B
-#define NEO_KHZ800 0x0000 ///< 800 KHz data transmission
-
-#define PIN 3
-
-#define NUM_LEDS 10
-
-#define BRIGHTNESS 50
-
-Adafruit_NeoPixel smartBlock = Adafruit_NeoPixel(NUM_LEDS, PIN, NEO_RGB + NEO_KHZ800);
-Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
-GyroAccel mpu6050;
 
 
-void setup() {
-	// put your setup code here, to run once:
-	smartBlock.setBrightness(BRIGHTNESS);
-	smartBlock.begin();
-	smartBlock.clear();
-	smartBlock.show(); //initializes
+//	Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
+//	Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_700MS, TCS34725_GAIN_1X);
+	Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_2_4MS, TCS34725_GAIN_16X);
+
+//The setup function is called once at startup of the sketch
+void setup()
+{
+
 	Serial.begin(9600);
-	mpu6050.gyroStart();
+
 	if (tcs.begin()) {
 		Serial.println("Found sensor");
 	} else {
 		Serial.println("No TCS34725 found ... check your connections");
-		while (1); // halt!
+	while (1);
 	}
+
 }
 
-void loop() {
-	// put your main code here, to run repeatedly:
-	float red, green, blue;
-	int redSet = 0;
-	int greenSet = 0;
-	int blueSet = 0;
-	String secretMessage = "";
+// The loop function is called in an endless loop
+void loop(){
 
-	tcs.setInterrupt(false);  // turn on LED
+	  uint16_t r, g, b, c, colorTemp, lux;
 
-	delay(60);  // takes 50ms to read
+	  tcs.getRawData(&r, &g, &b, &c);
+	  // colorTemp = tcs.calculateColorTemperature(r, g, b);
+	  //colorTemp = tcs.calculateColorTemperature_dn40(r, g, b, c);
+	  //lux = tcs.calculateLux(r, g, b);
 
-	tcs.getRGB(&red, &green, &blue);
+	  Serial.print(b, DEC); Serial.print(" ");
+	  Serial.print(r, DEC); Serial.print(" ");
+	  Serial.print(g, DEC); Serial.println(" ");
 
-	tcs.setInterrupt(true);  // turn off LED
-//
-	Serial.print("R:\t"); Serial.print(int(red));
-	Serial.print("\tG:\t"); Serial.print(int(green));
-	Serial.print("\tB:\t"); Serial.print(int(blue));
-
-	if(int(red) >= 175){
-		redSet = 255;
-	}
-	else if(int(red) < 100 && int(red) >= 50){
-		redSet = int(red);
-	}
-	else{
-		redSet = 0;
-	}
-
-	if(int(green) >= 175){
-		greenSet = 255;
-	}
-	else if(int(green) < 100 && int(green) >= 50 ){
-		greenSet = int(green);
-	}
-	else{
-		greenSet = 0;
-	}
-	if(int(blue) >= 175){
-		blueSet = 255;	}
-	else if(int(blue) < 100 && int(blue) >= 50 ){
-		blueSet = int(blue);
-	}
-	else{
-		blueSet = 0;
-	}
-
-	//  Serial.print("\t");
-	//  Serial.print((int)red, HEX); Serial.print((int)green, HEX); Serial.print((int)blue, HEX);
-	Serial.print("\n");
-
-	mpu6050.getGyroValues();
-	long x = mpu6050.acc_x;
-	//Serial.println(x);
-	//Serial.print("\n");
-
-//	for(int i = 1; i <= 3; i++){
-//		switch (i){
-//		case 1:
-//			smartBlock.setPixelColor(0, smartBlock.Color(255, 0, 0));
-//			smartBlock.show(); //initializes
-//			Serial.println(secretMessage);
-//			delay(500);
-//
-//			break;
-//		case 2:
-//			smartBlock.setPixelColor(0, smartBlock.Color(0, 255, 0));
-//			smartBlock.show(); //initializes
-//			Serial.println(secretMessage);
-//			delay(500);
-//
-//			break;
-//		case 3:
-//			smartBlock.setPixelColor(0, smartBlock.Color(0, 0, 255));
-//			smartBlock.show(); //initializes
-//			Serial.println(secretMessage);
-//			delay(500);
-//			break;
-//		}
-
-//	}
-	smartBlock.setPixelColor(5, smartBlock.Color(redSet, greenSet, blueSet));
-	//smartBlock.clear();
-
+//	  Serial.print("Color Temp: "); Serial.print(colorTemp, DEC); Serial.print(" K - ");
+//	  Serial.print("Lux: "); Serial.print(lux, DEC); Serial.print(" - ");
+//	  Serial.print("R: "); Serial.print(r, DEC); Serial.print(" ");
+//	  Serial.print("G: "); Serial.print(g, DEC); Serial.print(" ");
+//	  Serial.print("B: "); Serial.print(b, DEC); Serial.print(" ");
+//	  Serial.print("C: "); Serial.print(c, DEC); Serial.print(" ");
+//	  Serial.println(" ");
 }
